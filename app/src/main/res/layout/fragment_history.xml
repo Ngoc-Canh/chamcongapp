@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/swipeRefreshHistory"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        tools:context=".screen.homeFragment">
+
+        <com.applandeo.materialcalendarview.CalendarView
+            android:id="@+id/materialCalendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:headerColor="#FFC107"
+            app:headerLabelColor="@color/white"
+            app:todayLabelColor="#FFC107"
+            app:selectionColor="@android:color/white"
+            />
+
+
+        <LinearLayout
+            android:id="@+id/linearCheckIn"
+            android:visibility="gone"
+            android:layout_marginVertical="15dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/check_in"/>
+            <TextView
+                android:id="@+id/tv_checkIn"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Check In Time"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearCheckOut"
+            android:visibility="gone"
+            android:layout_marginVertical="15dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_marginRight="20dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/check_out"/>
+            <TextView
+                android:id="@+id/tv_checkOut"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Check Out Time"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearReason"
+            android:visibility="gone"
+            android:layout_marginVertical="15dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="20dp"
+                android:src="@drawable/description_icon"/>
+            <TextView
+                android:id="@+id/tv_reason"
+                android:layout_gravity="center_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reason"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

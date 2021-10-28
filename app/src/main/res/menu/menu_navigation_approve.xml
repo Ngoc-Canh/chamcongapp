@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/dayOff" android:title="Duyệt Phép" android:icon="@drawable/ic_duyet_phep_24_white"/>
+    <item android:id="@+id/submission" android:title="Duyệt Công" android:icon="@drawable/ic_duyet_cong_24_white" />
+</menu>

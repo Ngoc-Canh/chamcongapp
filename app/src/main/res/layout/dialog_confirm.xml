@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="16dp"
+    android:background="@drawable/bg_white_shape_16">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:text="Thông báo"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:background="@drawable/bg_white_shape_16_only_top"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/message_confirm"
+            android:calendarViewShown="true"
+            android:spinnersShown="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:text="Bạn có chắc chắn khi phê duyệt các yêu cầu mà bạn đã chọn. Việc xét duyệt yêu cầu sẽ không thể sửa đổi khi bạn nhấn đông ý."/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="16dp"
+        android:paddingHorizontal="15dp"
+        >
+
+        <Button
+            android:id="@+id/cancelConfirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hủy"
+            android:textSize="14sp"
+            android:background="@drawable/bg_button_gray_corner_10"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            />
+
+        <Button
+            android:id="@+id/approveRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_yellow_corner_10"
+            android:text="Đồng Ý"
+            />
+    </LinearLayout>
+</LinearLayout>

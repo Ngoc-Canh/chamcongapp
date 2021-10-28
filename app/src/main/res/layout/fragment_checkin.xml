@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/swipeRefresh"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".screen.homeFragment">
+
+        <TextView
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:text="Chấm Công"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:textColor="@color/white"
+            android:paddingVertical="5dp"
+            android:background="#FFC107"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/validateIp"
+            android:layout_below="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:paddingVertical="10dp"
+            android:textColor="#009688"
+            android:textSize="17dp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:text="Bạn đang chấm công ngoài phạm vi"/>
+
+        <ImageView
+            android:id="@+id/imgAnimation1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:src="@drawable/circle_animation"
+            />
+
+        <ImageView
+            android:id="@+id/imgAnimation2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:src="@drawable/circle_animation"
+            />
+
+        <Button
+            android:id="@+id/checkIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:textSize="13dp"
+            android:background="@drawable/circle_button"
+            android:text="Chấm Công \n00:00:00"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/currentDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/checkIn"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="30dp"
+            android:text="Thứ năm, Ngày 27-5-2021"
+            android:textColor="#FF9800"
+            android:drawableLeft="@drawable/ic_baseline_calendar_today_24"
+            android:drawablePadding="5dp"
+            android:textSize="15dp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/realTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/currentDate"
+            android:layout_marginTop="30dp"
+            android:background="#FFC107"
+            android:drawableLeft="@drawable/ic_baseline_flag_24"
+            android:drawablePadding="3dp"
+            android:padding="10dp"
+            android:text="Hôm nay 00:00:00"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
+
+        <View
+            android:id="@+id/textLine"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/realTime"
+            android:background="#FFC107" />
+
+        <TextView
+            android:id="@+id/none_event"
+            android:layout_marginTop="30dp"
+            android:text="Bạn chưa chấm công"
+            android:textColor="#009688"
+            android:textSize="17dp"
+            android:paddingLeft="40dp"
+            android:drawableLeft="@drawable/ic_baseline_info_24"
+            android:drawablePadding="10dp"
+            android:textStyle="bold"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"
+            android:layout_below="@id/textLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:id="@+id/info_checkIn"
+            android:visibility="gone"
+            android:layout_marginTop="30dp"
+            android:text="Bạn chưa chấm công"
+            android:textColor="#009688"
+            android:textSize="17dp"
+            android:paddingLeft="40dp"
+            android:drawableLeft="@drawable/ic_baseline_info_24"
+            android:drawablePadding="10dp"
+            android:textStyle="bold"
+            android:gravity="center_vertical"
+            android:layout_centerVertical="true"
+            android:layout_below="@id/textLine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView
+            android:id="@+id/info_checkOut"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textLine"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="85dp"
+            android:drawableLeft="@drawable/ic_baseline_info_24"
+            android:drawablePadding="10dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="40dp"
+            android:text="Bạn chưa chấm công"
+            android:textColor="#009688"
+            android:textSize="17dp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

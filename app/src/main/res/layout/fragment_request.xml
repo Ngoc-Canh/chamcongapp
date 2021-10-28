@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".screen.requestFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="right"
+        android:background="#FFC107"
+        android:weightSum="8"
+        >
+
+        <TextView
+            android:id="@+id/header"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:text="Yêu Cầu Chấm Công"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:textColor="@color/white"
+            android:paddingVertical="5dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/btn_closeFragmentRequest"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#FFC107"
+            android:drawableRight="@drawable/ic_baseline_clear_24"
+            android:textColor="@color/white"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="5dp"
+        android:gravity="right">
+
+        <Button
+            android:id="@+id/btn_createRequest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tạo Yêu Cầu"
+            android:textAllCaps="false"
+            android:drawableLeft="@drawable/ic_baseline_add_24"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="3">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableBottom="@drawable/dot_span_border_waiting"
+            android:text="Đang chờ duyệt"
+            android:textSize="10dp"
+            android:background="@color/white"
+            android:layout_weight="1"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableBottom="@drawable/dot_span_border_approve"
+            android:text="Chấp thuận"
+            android:textSize="10dp"
+            android:background="@color/white"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableBottom="@drawable/dot_span_border_decline"
+            android:text="Từ chối"
+            android:textSize="10dp"
+            android:background="@color/white"
+            android:layout_weight="1"/>
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+</LinearLayout>
