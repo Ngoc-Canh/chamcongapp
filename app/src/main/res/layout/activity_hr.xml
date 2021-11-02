@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".screen.ApproveActivity">
+
+    <com.example.demo.adapter.layout.CustomViewPager
+        android:id="@+id/view_pager_hr"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/navigation_hr"/>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation_hr"
+        android:background="@color/black"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:backgroundTint="#FFFFFF"
+        app:menu="@menu/menu_navigation_hr_screen"
+        app:itemTextColor="@color/color_navigation"
+        app:itemIconTint="@color/color_navigation"
+        app:labelVisibilityMode="labeled"
+        />
+</RelativeLayout>

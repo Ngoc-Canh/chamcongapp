@@ -29,12 +29,14 @@ class SessionManager(context: Context) {
         const val IS_USER = "isUser"
         const val IS_HR = "isHR"
         const val TOKEN_DEVICE = "tokenDevice"
+        const val NOTIFY_1 = "notify_1"
+        const val NOTIFY_2 = "notify_2"
 
         var currentMonth: Int = 0
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun convertDateTimeToTimestamp(input: String): Long{
+    fun convertDateTimeToTimestamp(input: String): Long{
         val formatter= SimpleDateFormat("dd/MM/yyyy HH:ss")
         val date = formatter.parse(input)
         return date.time
@@ -273,6 +275,26 @@ class SessionManager(context: Context) {
 
     fun fetchTokenDevice(): String? {
         return prefs.getString(TOKEN_DEVICE, null)
+    }
+
+    fun saveNotify1(active: Boolean){
+        val editor = prefs.edit()
+        editor.putBoolean(NOTIFY_1, active)
+        editor.apply()
+    }
+
+    fun saveNotify2(active: Boolean){
+        val editor = prefs.edit()
+        editor.putBoolean(NOTIFY_2, active)
+        editor.apply()
+    }
+
+    fun fetchNotify1(): Boolean {
+        return prefs.getBoolean(NOTIFY_1, false)
+    }
+
+    fun fetchNotify2(): Boolean {
+        return prefs.getBoolean(NOTIFY_2, false)
     }
 
     fun refreshAll(){

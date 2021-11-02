@@ -4,18 +4,35 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
+import com.example.demo.Constant
 import com.example.demo.R
 import com.example.demo.adapter.ViewPagerAdapter
+import com.example.demo.backend.ApiClient
+import com.example.demo.backend.RestAPI
+import com.example.demo.backend.SessionManager
+import com.example.demo.backend.entities.Event
+import com.example.demo.backend.entities.ListSubmission
+import com.example.demo.backend.entities.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var mViewPager: ViewPager
     lateinit var mBottomNavigationView: BottomNavigationView
+    lateinit var sessionManager: SessionManager
+    lateinit var token: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        sessionManager = SessionManager(this)
+        token = "token ${sessionManager.fetchAuthToken()}"
+
+        saveTokenDevice()
 
         mViewPager = findViewById(R.id.view_pager)
         mBottomNavigationView = findViewById(R.id.navigation)
@@ -61,5 +78,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun saveTokenDevice(){
+        if (sessionManager.fetchTokenDevice() != null){
+            return
+        }
+        val request = ApiClient.getClient().create(RestAPI::class.java)
+        val user = User(sessionManager.fetchUserName(), sessionManager.fetchMyEmail(), sessionManager.fetchTokenDevice())
+        val call = request.saveTokenDevice(token, user)
+        call.enqueue(object: Callback<Event>{
+            override fun onResponse(call: Call<Event>, response: Response<Event>) {
+                println("Save Token Device Success")
+            }
 
+            override fun onFailure(call: Call<Event>, t: Throwable) {
+                Constant.dialogError(this@MainActivity, "Có lỗi xảy ra vui lòng thử lại.")
+            }
+        })
+    }
 }

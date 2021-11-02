@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/users" android:title="Nhân Sự" android:icon="@drawable/ic_baseline_supervisor_account_24"/>
+    <item android:id="@+id/holiday" android:title="Nghỉ lễ" android:icon="@drawable/ic_baseline_beach_access_24" android:iconTint="@color/white"/>
+</menu>

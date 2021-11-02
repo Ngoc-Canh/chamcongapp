@@ -52,7 +52,10 @@ class UserAdapter(var lstUser: ArrayList<User>, val ctx: Context): RecyclerView.
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        val user = lstUser[position] ?: return
+        if (lstUser.size <= 0){
+            return
+        }
+        val user = lstUser[position]
         viewBinderHelper.bind(holder.swipeLayout, user.id.toString())
         holder.userName.text = user.full_name
 

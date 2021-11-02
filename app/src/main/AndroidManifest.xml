@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Demo"
         android:usesCleartextTraffic="true">
+        <activity android:name=".screen.HrActivity"></activity>
 
         <service
             android:name=".fcm.MyFirebaseMessagingService"
@@ -22,7 +23,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".screen.UserManagerHrActivity"></activity>
+        <activity android:name=".screen.UserManagerHrActivity" />
         <activity android:name=".screen.RequestDayOffActivity" />
         <activity android:name=".screen.RequestActivity" />
         <activity android:name=".screen.ApproveActivity" />

@@ -3,10 +3,10 @@ package com.example.demo.adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import com.example.demo.screen.checkinFragment
+import com.example.demo.screen.CheckinFragment
 import com.example.demo.screen.historyFragment
 import com.example.demo.screen.homeFragment
-import com.example.demo.screen.profileFragment
+import com.example.demo.screen.ProfileFragment
 
 class ViewPagerAdapter(fragmentManager: FragmentManager, behavior: Int) : FragmentStatePagerAdapter(fragmentManager) {
 
@@ -17,9 +17,9 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, behavior: Int) : Fragme
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> homeFragment()
-            1 -> checkinFragment()
+            1 -> CheckinFragment()
             2 -> historyFragment()
-            3 -> profileFragment()
+            3 -> ProfileFragment()
 
             else -> {
                 homeFragment()

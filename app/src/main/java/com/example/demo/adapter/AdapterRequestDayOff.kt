@@ -103,11 +103,11 @@ class AdapterRequestDayOff(private var lstData: ArrayList<DayOffEntities>,
             IS_DECLINE -> {
                 val dayOffStatus: DayOffDeclineStatus = holder as DayOffDeclineStatus
                 dayOffStatus.tvTitleDayOffDecline.text = "Yêu cầu ${dayOff.type}"
-                dayOffStatus.tvStartDateApprove.text = df.format(dayOff.start_date!!)
-                dayOffStatus.tvEndDateApprove.text = df.format(dayOff.end_date!!)
-                dayOffStatus.tvTypeDayOffApprove.text = dayOff.type
-                dayOffStatus.tvNumberDayOffApprove.text = dayOff.total_dayOff.toString()
-                dayOffStatus.tvNumberDayOffApprove.text = sessionManager.fetchManagerName()
+                dayOffStatus.tvStartDateDecline.text = df.format(dayOff.start_date!!)
+                dayOffStatus.tvEndDateDecline.text = df.format(dayOff.end_date!!)
+                dayOffStatus.tvTypeDayOffDecline.text = dayOff.type
+                dayOffStatus.tvNumberDayOffDecline.text = dayOff.total_dayOff.toString()
+                dayOffStatus.tvNumberDayOffDecline.text = sessionManager.fetchManagerName()
             }
         }
     }
@@ -163,9 +163,9 @@ class AdapterRequestDayOff(private var lstData: ArrayList<DayOffEntities>,
 
     class DayOffDeclineStatus(itemView: View): RecyclerView.ViewHolder(itemView){
         val tvTitleDayOffDecline: TextView = itemView.findViewById(R.id.tv_title_dayOff_decline)
-        val tvStartDateApprove: TextView = itemView.findViewById(R.id.tv_start_date_approve)
-        val tvEndDateApprove: TextView = itemView.findViewById(R.id.tv_end_date_approve)
-        val tvTypeDayOffApprove: TextView = itemView.findViewById(R.id.tv_type_dayOff_approve)
-        val tvNumberDayOffApprove: TextView = itemView.findViewById(R.id.tv_number_dayOff_approve)
+        val tvStartDateDecline: TextView = itemView.findViewById(R.id.tv_start_date_decline)
+        val tvEndDateDecline: TextView = itemView.findViewById(R.id.tv_end_date_decline)
+        val tvTypeDayOffDecline: TextView = itemView.findViewById(R.id.tv_type_dayOff_decline)
+        val tvNumberDayOffDecline: TextView = itemView.findViewById(R.id.tv_number_dayOff_decline)
     }
 }

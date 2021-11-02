@@ -2,13 +2,11 @@ package com.example.demo.screen
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.*
@@ -30,7 +28,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class checkinFragment : Fragment(){
+class CheckinFragment : Fragment(){
     private var handlerAnimation = Handler()
     private var arrWeek = arrayOf( "Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy")
     private lateinit var countDownGlobalVar: CountDownTimer

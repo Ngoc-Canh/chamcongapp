@@ -31,4 +31,5 @@
         <item>Ca Chiều</item>
         <item>Cả Ngày</item>
     </string-array>
+    <string name="title_activity_demoact">demoact</string>
 </resources>

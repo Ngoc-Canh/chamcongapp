@@ -3,8 +3,6 @@ package com.example.demo.screen
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +18,6 @@ import com.example.demo.backend.RestAPI
 import com.example.demo.backend.SessionManager
 import com.example.demo.backend.entities.Event
 import com.example.demo.backend.entities.EventDetail
-import com.example.demo.backend.entities.User
-import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -125,7 +121,7 @@ class homeFragment : Fragment(){
             btnUserManager.visibility = View.VISIBLE
 
             btnUserManager.setOnClickListener {
-                val intent = Intent(context?.applicationContext, UserManagerHrActivity::class.java)
+                val intent = Intent(context?.applicationContext, HrActivity::class.java)
                 startActivity(intent)
             }
         }
@@ -145,8 +141,8 @@ class homeFragment : Fragment(){
     }
 
     private fun loadData() {
-        val user = User(sessionManager.fetchUserName(), sessionManager.fetchMyEmail(), sessionManager.fetchTokenDevice())
-        val call = request.postEvent(token, user)
+//        val user = User(sessionManager.fetchUserName(), sessionManager.fetchMyEmail(), sessionManager.fetchTokenDevice())
+        val call = request.getEvent(token)
         call.enqueue(object: Callback<Event> {
             @SuppressLint("SetTextI18n")
             override fun onResponse(call: Call<Event>, response: Response<Event>) {
