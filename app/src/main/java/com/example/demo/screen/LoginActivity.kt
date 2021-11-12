@@ -91,18 +91,18 @@ class LoginActivity : AppCompatActivity() {
                                 startActivity(intent)
                                 finish()
                             }else{
-                                Constant.dialogError(applicationContext, "Tài khoản chưa được kích hoạt.")
+                                Constant.dialogError(this@LoginActivity, "Tài khoản chưa được kích hoạt.")
                             }
                         }
                         override fun onFailure(callInfo: Call<User>, t: Throwable) {
-                            Constant.dialogError(applicationContext, "Có lỗi xảy ra vui lòng thử lại.")
+                            Constant.dialogError(this@LoginActivity, "Có lỗi xảy ra vui lòng thử lại.")
                         }
                     })
 
                 }else if(response.code() == 400){
-                    Constant.dialogError(applicationContext, "Tài khoản mật khẩu không chính xác")
+                    Constant.dialogError(this@LoginActivity, "Tài khoản mật khẩu không chính xác")
                 }else{
-                    Constant.dialogError(applicationContext, "Có lỗi xảy ra vui lòng thử lại.")
+                    Constant.dialogError(this@LoginActivity, "Có lỗi xảy ra vui lòng thử lại.")
                 }
             }
 

@@ -44,7 +44,7 @@ interface RestAPI {
     fun createDayOff(@Header("Authorization") token: String, @Body data: DayOffEntities): Call<DayOffEntities>
 
     @DELETE("dayOff/{id}")
-    fun deleteDayOff(@Header("Authorization") token: String, @Path("id") id: Int): Call<DayOffEntities>
+    fun deleteDayOff(@Header("Authorization") token: String, @Path("id") id: Int): Call<List<String>>
 
     @GET("approve/approveDayOff")
     fun getApproveDayOff(@Header("Authorization") token: String): Call<ListDayOffEntities>

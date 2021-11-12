@@ -50,6 +50,9 @@ class RequestDayOffActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
     private lateinit var adapter: AdapterRequestDayOff
     private lateinit var rcvDayOff: RecyclerView
     private lateinit var lstData: ArrayList<DayOffEntities>
+    private lateinit var lstWaiting: ArrayList<DayOffEntities>
+    private lateinit var lstApprove: ArrayList<DayOffEntities>
+    private lateinit var lstDecline: ArrayList<DayOffEntities>
     private var tsStartForStartDate: Long = 0
     private var tsEndForStartDate: Long = 0
     private var tsStartForEndDate: Long = 0
@@ -86,7 +89,6 @@ class RequestDayOffActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
 
         lstData = ArrayList()
         loadData()
-        setLayout(true, null, null)
 
         btnCreateDayOff.setOnClickListener {
             openDialog(Gravity.CENTER)
@@ -98,14 +100,17 @@ class RequestDayOffActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
 
         btnWaiting.setOnClickListener {
             buttonActive(BUTTON_WAITING)
+            adapter.setData(lstWaiting)
         }
 
         btnAccept.setOnClickListener {
             buttonActive(BUTTON_APPROVE)
+            adapter.setData(lstApprove)
         }
 
         btnDecline.setOnClickListener {
             buttonActive(BUTTON_DECLINE)
+            adapter.setData(lstDecline)
         }
 
     }
@@ -246,6 +251,7 @@ class RequestDayOffActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
                     }
 
                     override fun onFailure(call: Call<DayOffEntities>, t: Throwable) {
+                        swipeRefresh.isRefreshing = false
                         validLayout.visibility = View.VISIBLE
                         validMessage.text = "Có lỗi xảy ra xin hãy thử lại."
                     }
@@ -319,7 +325,7 @@ class RequestDayOffActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
                 if (response.code() == 200){
                     response.body()?.data?.forEach {
                         lstData.add(it)
-                        setLayout(true, null, null)
+                        setLayout()
                         swipeRefresh.isRefreshing = false
                     }
                 }
@@ -327,7 +333,7 @@ class RequestDayOffActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
 
             override fun onFailure(call: Call<ListDayOffEntities>, t: Throwable) {
                 swipeRefresh.isRefreshing = false
-                Constant.dialogError(applicationContext, "Có lỗi xảy ra vui lòng thử lại.")
+                Constant.dialogError(this@RequestDayOffActivity, "Có lỗi xảy ra vui lòng thử lại.")
             }
 
         })
@@ -355,20 +361,40 @@ class RequestDayOffActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
         }
     }
 
-    private fun setLayout(is_waiting: Boolean?, is_approve: Boolean?, is_decline: Boolean?){
+    private fun setLayout(){
+        lstWaiting = ArrayList()
+        lstApprove = ArrayList()
+        lstDecline = ArrayList()
+        
         if (lstData.size >= 2){
             rcvDayOff.layoutManager = GridLayoutManager(this, 2)
         }else{
             rcvDayOff.layoutManager = LinearLayoutManager(this)
         }
-        adapter = AdapterRequestDayOff(lstData,this, this, is_waiting, is_approve, is_decline)
+        lstData.forEach {
+            when (it.manager_confirm){
+                "waiting" -> {
+                    lstWaiting.add(it)
+                }
+                "accept" -> {
+                    lstApprove.add(it)
+                }
+                else -> {
+                    lstDecline.add(it)
+                }
+            }
+        }
+
+        adapter = AdapterRequestDayOff(lstData,this, this)
         rcvDayOff.adapter = adapter
-        adapter.setData(lstData)
+        adapter.setData(lstWaiting)
+
     }
 
     @SuppressLint("SimpleDateFormat")
     private fun convertDateTimeToTimestamp(input: String): Long{
         val formatter= SimpleDateFormat("dd/MM/yyyy HH:ss")
+        formatter.timeZone = TimeZone.getTimeZone("GMT+0700")
         val date = formatter.parse(input)
         return date.time
     }
@@ -397,7 +423,7 @@ class RequestDayOffActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
 
         val btnClose = dialog.findViewById<Button>(R.id.cancelConfirm)
         val btnSend = dialog.findViewById<Button>(R.id.approveRequest)
-        val messageConfirm = dialog.findViewById<Button>(R.id.message_confirm)
+        val messageConfirm = dialog.findViewById<TextView>(R.id.message_confirm)
 
         messageConfirm.text = msg
 
@@ -407,26 +433,25 @@ class RequestDayOffActivity : AppCompatActivity(), AdapterView.OnItemSelectedLis
 
         btnSend.setOnClickListener {
             dialog.dismiss()
+            swipeRefresh.isRefreshing = true
             val call = request.deleteDayOff(token, id = id)
-            call.enqueue(object : Callback<DayOffEntities> {
-                override fun onResponse(
-                    call: Call<DayOffEntities>,
-                    response: Response<DayOffEntities>
-                ) {
+            call.enqueue(object : Callback<List<String>> {
+                override fun onResponse(call: Call<List<String>>, response: Response<List<String>>) {
                     if (response.code() == 200){
                         loadData()
                         swipeRefresh.isRefreshing = false
-                        val jObjError = JSONObject(response.errorBody()?.string())
-                        Constant.dialogSuccess(applicationContext, jObjError["msg"].toString())
+                        val msg = response.body()!![0].split(":")[1]
+                        Constant.dialogSuccess(this@RequestDayOffActivity, msg.toString())
                     }else{
                         swipeRefresh.isRefreshing = false
                         val jObjError = JSONObject(response.errorBody()?.string())
-                        Constant.dialogError(applicationContext, jObjError["msg"].toString())
+                        Constant.dialogError(this@RequestDayOffActivity, jObjError["msg"].toString())
                     }
                 }
 
-                override fun onFailure(call: Call<DayOffEntities>, t: Throwable) {
-                    Constant.dialogError(applicationContext, "Có lỗi xảy ra vui lòng thử lại.")
+                override fun onFailure(call: Call<List<String>>, t: Throwable) {
+                    swipeRefresh.isRefreshing = false
+                    Constant.dialogError(this@RequestDayOffActivity, "${t.message}")
                 }
             })
         }

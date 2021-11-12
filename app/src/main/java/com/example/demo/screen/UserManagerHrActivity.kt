@@ -122,7 +122,7 @@ class UserManagerHrActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
 
             override fun onFailure(call: Call<ListUser>, t: Throwable) {
                 swipeRefresh.isRefreshing = false
-                Constant.dialogError(applicationContext, "Có lỗi xảy ra vui lòng thử lại.")
+                Constant.dialogError(this@UserManagerHrActivity, "Có lỗi xảy ra vui lòng thử lại.")
             }
         })
 
@@ -245,7 +245,7 @@ class UserManagerHrActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
                     valid.visibility = View.GONE
                     dialog.dismiss()
                     getListUser()
-                    Constant.dialogSuccess(applicationContext, "Tạo mới thành công.")
+                    Constant.dialogSuccess(this@UserManagerHrActivity, "Tạo mới thành công.")
                 }else{
                     valid.visibility = View.VISIBLE
                     val jObjError = JSONObject(response.errorBody()?.string())
@@ -255,7 +255,7 @@ class UserManagerHrActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshL
             }
 
             override fun onFailure(call: Call<User>, t: Throwable) {
-                Constant.dialogError(applicationContext, "Có lỗi xảy ra vui lòng thử lại.")
+                Constant.dialogError(this@UserManagerHrActivity, "Có lỗi xảy ra vui lòng thử lại.")
             }
 
         })

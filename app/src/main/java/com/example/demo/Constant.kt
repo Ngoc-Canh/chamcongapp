@@ -12,7 +12,7 @@ import android.widget.TextView
 
 interface Constant {
     companion object {
-        const val BASE_URL = "http://b1d9-113-168-165-30.ngrok.io"
+        const val BASE_URL = "http://10.0.3.2:8000"
         const val CHECK_IN = "check_in"
         const val CHECK_OUT = "check_out"
 

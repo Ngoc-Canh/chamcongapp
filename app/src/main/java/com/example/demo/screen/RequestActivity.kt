@@ -184,14 +184,14 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
                         if(response.isSuccessful && response.code() == 200){
                             dialog.dismiss()
                             loadData()
-                            Constant.dialogSuccess(applicationContext, "Tạo yêu cầu mới thành công.")
+                            Constant.dialogSuccess(this@RequestActivity, "Tạo yêu cầu mới thành công.")
                         }else{
                             println(response.body())
                         }
                     }
 
                     override fun onFailure(call: Call<EventEntities>, t: Throwable) {
-                        Constant.dialogError(applicationContext, "Có lỗi xảy ra vui lòng thử lại.")
+                        Constant.dialogError(this@RequestActivity, "Có lỗi xảy ra vui lòng thử lại.")
                     }
 
                 })
@@ -253,7 +253,7 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
 
             override fun onFailure(call: Call<Event>, t: Throwable) {
                 swipeRefreshSubmission.isRefreshing = false
-                Constant.dialogError(applicationContext, "Có lỗi xảy ra vui lòng thử lại.")
+                Constant.dialogError(this@RequestActivity, "Có lỗi xảy ra vui lòng thử lại.")
             }
 
         })
@@ -331,16 +331,16 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
                         loadData()
                         swipeRefreshSubmission.isRefreshing = false
                         val jObjError = JSONObject(response.errorBody()?.string())
-                        Constant.dialogSuccess(applicationContext, jObjError["msg"].toString())
+                        Constant.dialogSuccess(this@RequestActivity, jObjError["msg"].toString())
                     }else{
                         swipeRefreshSubmission.isRefreshing = false
                         val jObjError = JSONObject(response.errorBody()?.string())
-                        Constant.dialogError(applicationContext, jObjError["msg"].toString())
+                        Constant.dialogError(this@RequestActivity, jObjError["msg"].toString())
                     }
                 }
 
                 override fun onFailure(call: Call<EventEntities>, t: Throwable) {
-                    Constant.dialogError(applicationContext, "Có lỗi xày ra vui lòng thử lại.")
+                    Constant.dialogError(this@RequestActivity, "Có lỗi xày ra vui lòng thử lại.")
                 }
             })
         }

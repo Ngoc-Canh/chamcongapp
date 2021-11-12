@@ -24,10 +24,7 @@ import kotlin.collections.ArrayList
 
 class AdapterRequestDayOff(private var lstData: ArrayList<DayOffEntities>,
                            var deleteItem: DeleteItem,
-                           var ctx: Context?,
-                           var isWaiting: Boolean?,
-                           var isApprove: Boolean?,
-                           var isDecline: Boolean?):
+                           var ctx: Context?):
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val IS_WAITING = 1
