@@ -9,6 +9,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.demo.Constant
 import com.example.demo.R
 import com.example.demo.backend.ApiClient
@@ -25,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var editPassword: EditText
     private lateinit var buttonLogin: Button
     private lateinit var buttonRegister: Button
+    private lateinit var swipeRefreshLogin: SwipeRefreshLayout
     private lateinit var prefs: SharedPreferences
     private lateinit var sessionManager: SessionManager
     private val request = ApiClient.getClient().create(RestAPI::class.java)
@@ -41,6 +43,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         buttonLogin.setOnClickListener {
+            swipeRefreshLogin.isRefreshing = true
             login()
         }
 
@@ -90,20 +93,26 @@ class LoginActivity : AppCompatActivity() {
                             }else{
                                 Constant.dialogError(this@LoginActivity, "Tài khoản chưa được kích hoạt.")
                             }
+
+                            swipeRefreshLogin.isRefreshing = false
                         }
                         override fun onFailure(callInfo: Call<User>, t: Throwable) {
+                            swipeRefreshLogin.isRefreshing = false
                             Constant.dialogError(this@LoginActivity, "Có lỗi xảy ra vui lòng thử lại.")
                         }
                     })
 
                 }else if(response.code() == 400){
+                    swipeRefreshLogin.isRefreshing = false
                     Constant.dialogError(this@LoginActivity, "Tài khoản mật khẩu không chính xác")
                 }else{
+                    swipeRefreshLogin.isRefreshing = false
                     Constant.dialogError(this@LoginActivity, "Có lỗi xảy ra vui lòng thử lại.")
                 }
             }
 
             override fun onFailure(call: Call<User>, t: Throwable) {
+                swipeRefreshLogin.isRefreshing = false
                 Log.e("Error", t.message.toString())
             }
         })
@@ -114,11 +123,13 @@ class LoginActivity : AppCompatActivity() {
         editPassword = findViewById(R.id.editPassword)
         buttonLogin = findViewById(R.id.login)
         buttonRegister = findViewById(R.id.buttonRegister)
+        swipeRefreshLogin = findViewById(R.id.swipeRefreshLogin)
         prefs = getSharedPreferences("PREF", MODE_PRIVATE)
         sessionManager = SessionManager(applicationContext)
     }
 
     private fun redirectActivity(){
+        swipeRefreshLogin.isRefreshing = true
         val call = request.checkLogin("Token ${sessionManager.fetchAuthToken()}")
 
         if(!prefs.contains("tokenUser")){
@@ -133,9 +144,11 @@ class LoginActivity : AppCompatActivity() {
                 }else{
                     Constant.dialogError(this@LoginActivity, "Tài khoản không tồn tại.")
                 }
+                swipeRefreshLogin.isRefreshing = false
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
+                swipeRefreshLogin.isRefreshing = false
                 Constant.dialogError(this@LoginActivity, "Có lỗi xảy ra vui lòng thử lại.")
             }
         })

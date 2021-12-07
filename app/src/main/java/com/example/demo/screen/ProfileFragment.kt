@@ -1,6 +1,7 @@
 package com.example.demo.screen
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -61,6 +62,8 @@ class ProfileFragment : Fragment() {
 
         btnLogOut.setOnClickListener {
             sessionManager.refreshAll()
+            val intent = Intent(activity, MainActivity::class.java)
+            startActivity(intent)
             activity?.finish()
         }
 
