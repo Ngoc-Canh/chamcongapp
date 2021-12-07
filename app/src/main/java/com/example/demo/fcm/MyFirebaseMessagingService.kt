@@ -48,6 +48,9 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
     }
 
     private fun sendNotification(title: String?, message: String?) {
+        if (!sessionManager.fetchNotify1()){
+            return
+        }
         var intent = Intent(this, RequestActivity::class.java)
         if(sessionManager.fetchMyEmail() == "null"){
             intent = Intent(this, LoginActivity::class.java)

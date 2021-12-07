@@ -101,6 +101,7 @@
                     android:text="Gửi thông báo khi yêu cầu của bạn được chấp nhận"
                     android:textColor="#FFC107"
                     android:textStyle="bold"
+                    android:visibility="gone"
                     android:theme="@style/SCBSwitch"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
