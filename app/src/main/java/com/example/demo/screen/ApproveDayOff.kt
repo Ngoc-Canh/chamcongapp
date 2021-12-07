@@ -19,15 +19,10 @@ import com.example.demo.backend.ApiClient
 import com.example.demo.backend.RestAPI
 import com.example.demo.backend.SessionManager
 import com.example.demo.backend.entities.DayOffEntities
-import com.example.demo.backend.entities.EventEntities
 import com.example.demo.backend.entities.ListDayOffEntities
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.collections.ArrayList
 
 // TODO: Rename parameter arguments, choose names that match

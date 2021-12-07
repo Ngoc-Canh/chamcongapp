@@ -17,10 +17,7 @@ import kotlin.collections.ArrayList
 
 class RecyclerViewChamBu(private var lstData: ArrayList<EventDetail>,
                          val deleteItem: DeleteItem,
-                         var context: Context,
-                         var isWaiting: Boolean?,
-                         var isApprove: Boolean?,
-                         var isDecline: Boolean?):
+                         var context: Context):
     RecyclerView.Adapter<RecyclerViewChamBu.ChamBuViewHolder>() {
 
     private val IS_WAITING = 1
@@ -33,11 +30,8 @@ class RecyclerViewChamBu(private var lstData: ArrayList<EventDetail>,
 
     private val sessionManager = SessionManager(this.context)
 
-    fun setData(lst: ArrayList<EventDetail>, waiting: Boolean, accept: Boolean, decline: Boolean){
+    fun setData(lst: ArrayList<EventDetail>){
         this.lstData = lst
-        this.isWaiting = waiting
-        this.isApprove = accept
-        this.isDecline = decline
         notifyDataSetChanged()
     }
 

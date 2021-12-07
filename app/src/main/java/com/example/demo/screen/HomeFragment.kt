@@ -28,7 +28,7 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 
-class homeFragment : Fragment(){
+class homeFragment : Fragment() {
     private lateinit var btnRequest: Button
     private lateinit var btnRequestDayOff: Button
     private lateinit var btnUserManager: Button
@@ -87,7 +87,9 @@ class homeFragment : Fragment(){
         tvNotFound = view.findViewById(R.id.notFoundCheckInOut)
         swipeRefreshLayout = view.findViewById(R.id.swipeRefresh)
 
-        swipeRefreshLayout.setOnRefreshListener{ loadData() }
+        swipeRefreshLayout.setOnRefreshListener { loadData() }
+
+        swipeRefreshLayout.isRefreshing = true
 
         sessionManager = SessionManager(activity?.applicationContext!!)
 
@@ -117,7 +119,7 @@ class homeFragment : Fragment(){
             }
         }
 
-        if(sessionManager.fetchIsHR()){
+        if (sessionManager.fetchIsHR()) {
             btnUserManager.visibility = View.VISIBLE
 
             btnUserManager.setOnClickListener {
@@ -126,7 +128,7 @@ class homeFragment : Fragment(){
             }
         }
 
-        if(sessionManager.fetchIsManager()){
+        if (sessionManager.fetchIsManager()) {
             btnApprove.visibility = View.VISIBLE
 
             btnApprove.setOnClickListener {
@@ -143,21 +145,27 @@ class homeFragment : Fragment(){
     private fun loadData() {
 //        val user = User(sessionManager.fetchUserName(), sessionManager.fetchMyEmail(), sessionManager.fetchTokenDevice())
         val call = request.getEvent(token)
-        call.enqueue(object: Callback<Event> {
+        call.enqueue(object : Callback<Event> {
             @SuppressLint("SetTextI18n")
             override fun onResponse(call: Call<Event>, response: Response<Event>) {
                 val list: ArrayList<EventDetail>? = response.body()?.event
                 if (list != null) {
-                    for (item in list){
+                    for (item in list) {
                         when (item.event_type) {
                             Constant.CHECK_IN -> {
-                                val startTime = sessionManager.convertTimeStampToTime(item.created_at!!, "HH:mm:ss")
+                                val startTime = sessionManager.convertTimeStampToTime(
+                                    item.created_at!!,
+                                    "HH:mm:ss"
+                                )
                                 tvCheckInTime.visibility = View.VISIBLE
                                 tvNotFound.visibility = View.GONE
                                 tvCheckInTime.text = "Lúc đến: $startTime"
                             }
                             Constant.CHECK_OUT -> {
-                                val endTime = sessionManager.convertTimeStampToTime(item.created_at!!, "HH:mm:ss")
+                                val endTime = sessionManager.convertTimeStampToTime(
+                                    item.created_at!!,
+                                    "HH:mm:ss"
+                                )
                                 tvCheckOutTime.visibility = View.VISIBLE
                                 tvNotFound.visibility = View.GONE
                                 tvCheckOutTime.text = "Lúc về: $endTime"
@@ -169,15 +177,17 @@ class homeFragment : Fragment(){
                         }
                     }
                 }
+                swipeRefreshLayout.isRefreshing = false
             }
 
             override fun onFailure(call: Call<Event>, t: Throwable) {
-              Constant.dialogError(activity!!, "Có lỗi xảy ra vui lòng thử lại.")
+                Constant.dialogError(activity!!, "Có lỗi xảy ra vui lòng thử lại.")
+                swipeRefreshLayout.isRefreshing = false
             }
         })
     }
 
-    private fun convertDayOfWeek(day: Int): String{
+    private fun convertDayOfWeek(day: Int): String {
         return arrWeek[day]
     }
 }

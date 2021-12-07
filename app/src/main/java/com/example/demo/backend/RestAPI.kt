@@ -8,6 +8,9 @@ interface RestAPI {
     @POST("auth/login")
     fun login(@Body user: User) : Call<User>
 
+    @POST("core/getToken/")
+    fun checkLogin(@Header("Authorization") token: String): Call<String>
+
     @GET("auth/info")
     fun info(@Header("Authorization") token: String): Call<User>
 

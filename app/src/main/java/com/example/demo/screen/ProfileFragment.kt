@@ -50,6 +50,8 @@ class ProfileFragment : Fragment() {
         tvEmailManager = view.findViewById(R.id.textView13)
         tvDayOff = view.findViewById(R.id.textView15)
         refresh = view.findViewById(R.id.swipeRefresh)
+        notify1 = view.findViewById(R.id.switch1)
+        notify2 = view.findViewById(R.id.switch2)
         refresh.isRefreshing = true
 
         sessionManager = SessionManager(context?.applicationContext!!)

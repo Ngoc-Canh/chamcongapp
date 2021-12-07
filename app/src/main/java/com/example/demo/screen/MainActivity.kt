@@ -14,6 +14,7 @@ import com.example.demo.backend.entities.Event
 import com.example.demo.backend.entities.ListSubmission
 import com.example.demo.backend.entities.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.messaging.FirebaseMessaging
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -80,6 +81,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveTokenDevice(){
         if (sessionManager.fetchTokenDevice() != null){
+            retrieveTokenDevice()
+        }else{
             return
         }
         val request = ApiClient.getClient().create(RestAPI::class.java)
@@ -94,5 +97,13 @@ class MainActivity : AppCompatActivity() {
                 Constant.dialogError(this@MainActivity, "Có lỗi xảy ra vui lòng thử lại.")
             }
         })
+    }
+
+    private fun retrieveTokenDevice(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if(task.isSuccessful){
+                sessionManager.saveTokenDevice(task.result.toString())
+            }
+        }
     }
 }

@@ -100,10 +100,10 @@ class CheckinFragment : Fragment(){
         @SuppressLint("SetTextI18n", "SimpleDateFormat")
         override fun run() {
             val tvRealTime = view?.findViewById<TextView>(R.id.realTime)
-            val calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+7"))
+            val calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+0700"))
             val currentTime = calendar.time
             val fmDate = SimpleDateFormat("HH:mm:ss")
-            fmDate.timeZone = TimeZone.getTimeZone("GMT+7")
+            fmDate.timeZone = TimeZone.getTimeZone("GMT+0700")
 
             tvRealTime?.text = "Hôm nay " + fmDate.format(currentTime)
             handlerAnimation.postDelayed(this, 1000)
@@ -147,8 +147,9 @@ class CheckinFragment : Fragment(){
 
         btnCheckIn.setOnClickListener {
             swipeRefresh.isRefreshing = true
-            if(isValid){
+            if(!isValid){
                 openDialog()
+                swipeRefresh.isRefreshing = false
             }else{
                 when (flag) {
                     CHECK_IN -> {
@@ -228,11 +229,7 @@ class CheckinFragment : Fragment(){
                     isRunning = true
                 }
 
-                acceptCheckOut = if (min >= 5){
-                    true
-                }else{
-                    true
-                }
+                acceptCheckOut = min >= 5
 
                 if (endTime != null || currentHour == 12){
                     onFinish()
@@ -288,6 +285,7 @@ class CheckinFragment : Fragment(){
                                 txtCheckIn.visibility = View.VISIBLE
                                 txtNoneEvent.visibility = View.GONE
                                 txtCheckIn.text = "Lúc đến: $startTime"
+                                btnCheckIn.isEnabled = true
                                 flag = CHECK_OUT
                             }
                             CHECK_OUT -> {
@@ -298,12 +296,14 @@ class CheckinFragment : Fragment(){
                                 txtCheckOut.visibility = View.VISIBLE
                                 txtNoneEvent.visibility = View.GONE
                                 txtCheckOut.text = "Lúc về: $endTime"
+                                btnCheckIn.isEnabled = false
                                 flag = CHECK_IN
                             }
                             else -> {
                                 txtNoneEvent.visibility = View.VISIBLE
                                 txtNoneEvent.text = "Bạn chưa chấm công"
                                 flag = CHECK_IN
+                                btnCheckIn.isEnabled = true
                             }
                         }
                     }
@@ -313,6 +313,7 @@ class CheckinFragment : Fragment(){
 
             override fun onFailure(call: Call<Event>, t: Throwable) {
                 Constant.dialogError(activity!!, "Có lỗi xảy ra vui lòng thử lại.")
+                swipeRefresh.isRefreshing = false
             }
         })
     }
@@ -336,22 +337,25 @@ class CheckinFragment : Fragment(){
 
         val btnClose = dialog.findViewById<Button>(R.id.cancelConfirm)
         val btnSend = dialog.findViewById<Button>(R.id.approveRequest)
-        val messageConfirm = dialog.findViewById<Button>(R.id.message_confirm)
+        val messageConfirm = dialog.findViewById<TextView>(R.id.message_confirm)
 
         messageConfirm.text = "Bạn đang chấm công ngoài phạm vi. Công này sẽ gửi tới quản lý của bạn để xét duyệt.\n Bạn có đồng ý chấm công không ?"
 
         btnClose.setOnClickListener {
             dialog.dismiss()
+            swipeRefresh.isRefreshing = false
         }
 
         btnSend.setOnClickListener {
+            dialog.dismiss()
             when (flag) {
                 CHECK_IN -> {
                     checkInFunc()
+                    swipeRefresh.isRefreshing = false
                 }
-
                 CHECK_OUT -> {
                     checkOutFunc()
+                    swipeRefresh.isRefreshing = false
                 }
             }
         }
@@ -371,6 +375,7 @@ class CheckinFragment : Fragment(){
                 }else{
                     val jObjError = JSONObject(response.errorBody()?.string())
                     Constant.dialogError(activity!!, jObjError["msg"].toString())
+                    swipeRefresh.isRefreshing = false
                 }
             }
 
@@ -378,6 +383,7 @@ class CheckinFragment : Fragment(){
                 flag = CHECK_IN
                 Constant.dialogError(activity!!, "Có lỗi xảy ra vui lòng thử lại.")
                 btnCheckIn.isEnabled = true
+                swipeRefresh.isRefreshing = false
             }
         })
     }
@@ -393,14 +399,15 @@ class CheckinFragment : Fragment(){
                 }else{
                     val jObjError = JSONObject(response.errorBody()?.string())
                     Constant.dialogError(activity!!, jObjError["msg"].toString())
+                    swipeRefresh.isRefreshing = false
                 }
-                btnCheckIn.isEnabled = true
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
                 flag = CHECK_OUT
                 Constant.dialogError(activity!!, "Có lỗi xảy ra vui lòng thử lại.")
                 btnCheckIn.isEnabled = true
+                swipeRefresh.isRefreshing = false
             }
         })
     }

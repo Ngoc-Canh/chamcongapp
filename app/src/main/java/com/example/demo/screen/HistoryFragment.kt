@@ -40,7 +40,7 @@ private const val STATUS_DECLINE = "decline"
  * Use the [homeFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class historyFragment : Fragment(){
+class historyFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -87,7 +87,7 @@ class historyFragment : Fragment(){
         tv_reason = view.findViewById(R.id.tv_reason)
         swipeRefreshHistory = view.findViewById(R.id.swipeRefreshHistory)
 
-        swipeRefreshHistory.setOnRefreshListener{
+        swipeRefreshHistory.setOnRefreshListener {
             reloadData()
         }
         swipeRefreshHistory.isRefreshing = true
@@ -114,48 +114,61 @@ class historyFragment : Fragment(){
             val itMonth = it.calendar.time.month
             val itDate = it.calendar.time.date
 
-            dictEvent.forEach {
-                eventDay ->
-                    val evt = Date(eventDay.key)
-                    if (evt.date == itDate && evt.month == itMonth){
-                        linearReason.visibility = View.GONE
-                        linearCheckIn.visibility = View.VISIBLE
-                        linearCheckOut.visibility = View.VISIBLE
+            dictEvent.forEach { eventDay ->
+                val evt = Date(eventDay.key)
+                if (evt.date == itDate && evt.month == itMonth) {
+                    linearReason.visibility = View.GONE
+                    linearCheckIn.visibility = View.VISIBLE
+                    linearCheckOut.visibility = View.VISIBLE
 
-                        try {
-                            tv_checkIn.text = "Lúc đến: ${sessionManager.convertTimeStampToTime(timestamp = eventDay.value[0].created_at!!.toLong(), "HH:mm")}"
-                            tv_checkOut.text = "Lúc Về: ${sessionManager.convertTimeStampToTime(timestamp = eventDay.value[1].created_at!!.toLong(), "HH:mm")}"
-                        } catch (ex: Exception){
-                            tv_checkOut.text = ""
-                        }
-                        return@setOnDayClickListener
+                    try {
+                        tv_checkIn.text = "Lúc đến: ${
+                            sessionManager.convertTimeStampToTime(
+                                timestamp = eventDay.value[0].created_at!!.toLong(),
+                                "HH:mm"
+                            )
+                        }"
+                        tv_checkOut.text = "Lúc Về: ${
+                            sessionManager.convertTimeStampToTime(
+                                timestamp = eventDay.value[1].created_at!!.toLong(),
+                                "HH:mm"
+                            )
+                        }"
+                    } catch (ex: Exception) {
+                        tv_checkOut.text = ""
                     }
+                    return@setOnDayClickListener
+                }
             }
 
-            dictHoliday.forEach {
-                holiday ->
-                    val hld = Date(holiday.key)
-                    if (hld.date == itDate && hld.month == itMonth){
-                        linearCheckIn.visibility = View.GONE
-                        linearCheckOut.visibility = View.GONE
-                        linearReason.visibility = View.VISIBLE
+            dictHoliday.forEach { holiday ->
+                val hld = Date(holiday.key)
+                if (hld.date == itDate && hld.month == itMonth) {
+                    linearCheckIn.visibility = View.GONE
+                    linearCheckOut.visibility = View.GONE
+                    linearReason.visibility = View.VISIBLE
 
-                        tv_reason.text = holiday.value[0].description
-                        return@setOnDayClickListener
-                    }
+                    tv_reason.text = holiday.value[0].description
+                    return@setOnDayClickListener
+                }
             }
 
-            dictDayOff.forEach {
-                dayOff ->
-                    val d_off = Date(dayOff.key)
-                    if (d_off.date == itDate && d_off.month == itMonth){
-                        linearCheckIn.visibility = View.GONE
-                        linearCheckOut.visibility = View.GONE
-                        linearReason.visibility = View.VISIBLE
-
-                        tv_reason.text = dayOff.value[0].type
-                        return@setOnDayClickListener
+            dictDayOff.forEach { dayOff ->
+                val d_off = Date(dayOff.key)
+                if (d_off.date == itDate && d_off.month == itMonth) {
+                    linearCheckIn.visibility = View.GONE
+                    linearCheckOut.visibility = View.GONE
+                    linearReason.visibility = View.VISIBLE
+                    val txt = if (dayOff.value[0].all_day == true) {
+                        "cả ngày"
+                    } else if (dayOff.value[0].morning == true) {
+                        "vào ca sáng"
+                    } else {
+                        "vào ca chiều"
                     }
+                    tv_reason.text = "${dayOff.value[0].type} $txt \nTrạng thái: ${dayOff.value[0].status}"
+                    return@setOnDayClickListener
+                }
             }
 
             linearCheckIn.visibility = View.GONE
@@ -171,21 +184,23 @@ class historyFragment : Fragment(){
         return inflater.inflate(R.layout.fragment_history, container, false)
     }
 
-    private fun handleHistory(month: String, year: String){
-        if (listData.contains("$month/$year")){
+    private fun handleHistory(month: String, year: String) {
+        if (listData.contains("$month/$year")) {
             swipeRefreshHistory.isRefreshing = false
             return
         }
-        if(!callApi){
+        if (!callApi) {
             return
         }
         val request = ApiClient.getClient().create(RestAPI::class.java)
-        val call = request.history("Token ${sessionManager.fetchAuthToken()}",
-            month = month, year = year)
-        call.enqueue(object: Callback<Event> {
+        val call = request.history(
+            "Token ${sessionManager.fetchAuthToken()}",
+            month = month, year = year
+        )
+        call.enqueue(object : Callback<Event> {
             override fun onResponse(call: Call<Event>, response: Response<Event>) {
                 try {
-                    if(response.code() == 200){
+                    if (response.code() == 200) {
                         listData.add("$month/$year")
                         val list: ArrayList<EventDetail>? = response.body()?.event
                         val listHoliday: ArrayList<HolidayDetail>? = response.body()?.holiday
@@ -195,15 +210,15 @@ class historyFragment : Fragment(){
                             handleHoliday(listHoliday)
                         }
 
-                        if (listDayOff != null){
+                        if (listDayOff != null) {
                             handleDayOff(listDayOff)
                         }
 
-                        if (list != null){
-                            for (event in list){
-                                if (dictEvent.containsKey("${event.created_date}")){
+                        if (list != null) {
+                            for (event in list) {
+                                if (dictEvent.containsKey("${event.created_date}")) {
                                     dictEvent["${event.created_date!!}"]?.add(event)
-                                }else{
+                                } else {
                                     val array = ArrayList<EventDetail>()
                                     array.add(event)
                                     dictEvent["${event.created_date!!}"] = array
@@ -213,34 +228,35 @@ class historyFragment : Fragment(){
                         }
                         swipeRefreshHistory.isRefreshing = false
                     }
-                } catch (ex:Exception){
+                } catch (ex: Exception) {
                     swipeRefreshHistory.isRefreshing = false
                     Constant.dialogError(activity!!, "Có lỗi xảy ra vui lòng thử lại.")
                 }
             }
 
             override fun onFailure(call: Call<Event>, t: Throwable) {
+                swipeRefreshHistory.isRefreshing = false
                 Constant.dialogError(activity!!, "Có lỗi xảy ra vui lòng thử lại.")
             }
         })
     }
 
-    private fun handleEvent(){
-        for(key in dictEvent.keys){
+    private fun handleEvent() {
+        for (key in dictEvent.keys) {
             val calendar = Calendar.getInstance()
             val dateFm = Date(key)
             calendar.time = dateFm
 
-            if (dictEvent[key]!!.size == 1){
+            if (dictEvent[key]!!.size == 1) {
                 val data = getCheckInOut(dictEvent[key]!![0])
                 val dataSpl = data.split("_")
 
-                if (dataSpl[0] == Constant.CHECK_IN){
+                if (dataSpl[0] == Constant.CHECK_IN) {
                     createNoteCalendar(calendar, validCheckIn = dataSpl[1].toBoolean())
-                }else{
+                } else {
                     createNoteCalendar(calendar, validCheckOut = dataSpl[1].toBoolean())
                 }
-            }else if (dictEvent[key]!!.size == 2){
+            } else if (dictEvent[key]!!.size == 2) {
                 val dataCheckIn = dictEvent[key]!![0]
                 val dataCheckOut = dictEvent[key]!![1]
 
@@ -254,20 +270,18 @@ class historyFragment : Fragment(){
         materialCalendar.setEvents(events)
     }
 
-    private fun handleHoliday(data: ArrayList<HolidayDetail>){
-
-        dictHoliday = mutableMapOf()
-        for (hld in data){
-            if (dictHoliday.containsKey("${hld.holiday}")){
+    private fun handleHoliday(data: ArrayList<HolidayDetail>) {
+        for (hld in data) {
+            if (dictHoliday.containsKey("${hld.holiday}")) {
                 dictHoliday["${hld.holiday}"]?.add(hld)
-            }else{
+            } else {
                 val array = ArrayList<HolidayDetail>()
                 array.add(hld)
                 dictHoliday["${hld.holiday}"] = array
             }
         }
 
-        for(key in dictHoliday.keys){
+        for (key in dictHoliday.keys) {
             val calendar = Calendar.getInstance()
             val dateFm = Date(key)
             calendar.time = dateFm
@@ -278,12 +292,11 @@ class historyFragment : Fragment(){
     }
 
     private fun handleDayOff(listDayOff: ArrayList<DayOffDetail>?) {
-        dictDayOff = mutableMapOf()
         if (listDayOff != null) {
-            for (doff in listDayOff){
-                if (dictDayOff.containsKey("${doff.date}")){
+            for (doff in listDayOff) {
+                if (dictDayOff.containsKey("${doff.date}")) {
                     dictDayOff["${doff.date}"]?.add(doff)
-                }else{
+                } else {
                     val array = ArrayList<DayOffDetail>()
                     array.add(doff)
                     dictDayOff["${doff.date}"] = array
@@ -291,33 +304,42 @@ class historyFragment : Fragment(){
             }
         }
 
-        for(key in dictDayOff.keys){
+        for (key in dictDayOff.keys) {
             val calendar = Calendar.getInstance()
             val dateFm = Date(key)
             calendar.time = dateFm
 
-            events.add(EventDay(calendar, R.drawable.day_off_sign_door_chain_isolated_white_background_d_rendered_113379702))
+            events.add(
+                EventDay(
+                    calendar,
+                    R.drawable.day_off_sign_door_chain_isolated_white_background_d_rendered_113379702
+                )
+            )
         }
         materialCalendar.setEvents(events)
     }
 
-    private fun createNoteCalendar(calendar: Calendar, validCheckIn: Boolean = false, validCheckOut: Boolean = false){
-        if(validCheckIn && validCheckOut){
+    private fun createNoteCalendar(
+        calendar: Calendar,
+        validCheckIn: Boolean = false,
+        validCheckOut: Boolean = false
+    ) {
+        if (validCheckIn && validCheckOut) {
             events.add(EventDay(calendar, R.drawable.dot_span_success))
-        }else if (!validCheckIn || !validCheckOut){
+        } else if (!validCheckIn || !validCheckOut) {
             events.add(EventDay(calendar, R.drawable.dot_span_danger))
         }
     }
 
-    private fun getCheckInOut(data: EventDetail): String{
-        return if (data.event_type == Constant.CHECK_IN){
+    private fun getCheckInOut(data: EventDetail): String {
+        return if (data.event_type == Constant.CHECK_IN) {
             "${data.event_type}_${data.valid}"
-        }else{
+        } else {
             "${data.event_type}_${data.valid}"
         }
     }
 
-    fun reloadData(){
+    fun reloadData() {
         val calendar = Calendar.getInstance()
         materialCalendar.setDate(calendar)
         callApi = true
@@ -326,7 +348,9 @@ class historyFragment : Fragment(){
         dictEvent = mutableMapOf()
         dictHoliday = mutableMapOf()
         dictDayOff = mutableMapOf()
-
+        linearCheckIn.visibility = View.GONE
+        linearCheckOut.visibility = View.GONE
+        linearReason.visibility = View.GONE
         sessionManager.refreshMonthCalendar()
 
         val strMonthAndYear = sessionManager.getMonthYearCalendar(0).split("/")

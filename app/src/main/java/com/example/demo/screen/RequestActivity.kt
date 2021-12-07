@@ -27,10 +27,7 @@ import com.example.demo.adapter.RecyclerViewChamBu
 import com.example.demo.backend.ApiClient
 import com.example.demo.backend.RestAPI
 import com.example.demo.backend.SessionManager
-import com.example.demo.backend.entities.DayOffEntities
-import com.example.demo.backend.entities.Event
-import com.example.demo.backend.entities.EventDetail
-import com.example.demo.backend.entities.EventEntities
+import com.example.demo.backend.entities.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -41,7 +38,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.ArrayList
 
-class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener, DeleteItem{
+class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener, DeleteItem {
     lateinit var btnCreate: Button
     lateinit var btnClose: Button
     lateinit var type: String
@@ -62,6 +59,7 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
     val BUTTON_WAITING = 1
     val BUTTON_APPROVE = 2
     val BUTTON_DECLINE = 3
+    var isActive = 0
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,19 +74,17 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
         rcvRequest = findViewById(R.id.rcv_request)
         swipeRefreshSubmission = findViewById(R.id.swipeRefreshSubmission)
 
-        swipeRefreshSubmission.setOnRefreshListener{
+        swipeRefreshSubmission.setOnRefreshListener {
             loadData()
         }
         swipeRefreshSubmission.isRefreshing = true
 
-        lstWaiting = ArrayList()
-        lstAccept = ArrayList()
-        lstDecline = ArrayList()
+
 
         sessionManager = SessionManager(this)
         token = "Token ${sessionManager.fetchAuthToken()}"
 
-        if(sessionManager.fetchManagerName() == ""){
+        if (sessionManager.fetchManagerName() == "") {
             btnCreate.visibility = View.GONE
         }
 
@@ -100,36 +96,38 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
             openDialog(Gravity.CENTER)
         }
 
-        buttonActive(BUTTON_WAITING)
+        isActive = buttonActive(BUTTON_WAITING)
 
         btnWaiting.setOnClickListener {
-            buttonActive(BUTTON_WAITING)
-            recycleViewAdapter.setData(lstWaiting, true, accept = false, decline = false)
+            isActive = buttonActive(BUTTON_WAITING)
+            recycleViewAdapter.setData(lstWaiting)
         }
 
         btnApprove.setOnClickListener {
-            buttonActive(BUTTON_APPROVE)
-
-            recycleViewAdapter.setData(lstAccept, false, accept = true, decline = false)
+            isActive = buttonActive(BUTTON_APPROVE)
+            recycleViewAdapter.setData(lstAccept)
         }
 
         btnDecline.setOnClickListener {
-            buttonActive(BUTTON_DECLINE)
-            recycleViewAdapter.setData(lstDecline, false, accept = false, decline = true)
+            isActive = buttonActive(BUTTON_DECLINE)
+            recycleViewAdapter.setData(lstDecline)
         }
 
         loadData()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun openDialog(positionGravity: Int){
+    private fun openDialog(positionGravity: Int) {
         val dialog: Dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_layout)
 
         val window = dialog.window ?: return
 
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        window.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val windowAttribute: WindowManager.LayoutParams = window.attributes
@@ -140,7 +138,11 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
 
         val spn_type = dialog.findViewById<Spinner>(R.id.spinner1)
 
-        val adapter: ArrayAdapter<CharSequence> = ArrayAdapter.createFromResource(this, R.array.type, android.R.layout.simple_spinner_item)
+        val adapter: ArrayAdapter<CharSequence> = ArrayAdapter.createFromResource(
+            this,
+            R.array.type,
+            android.R.layout.simple_spinner_item
+        )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spn_type.adapter = adapter
         spn_type.onItemSelectedListener = this
@@ -162,9 +164,9 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
         }
 
         btn_send.setOnClickListener {
-            if(edt_time.text.isEmpty() || edt_date.text.isEmpty()){
+            if (edt_time.text.isEmpty() || edt_date.text.isEmpty()) {
                 valid_layout.visibility = View.VISIBLE
-            }else{
+            } else {
                 valid_layout.visibility = View.GONE
                 val timeRequest = edt_time.text
 
@@ -174,24 +176,49 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
                 val date = LocalDate.parse(dayRequest, formatter)
                 val ts = SimpleDateFormat("dd/MM/yyyy HH:mm").parse("$dayRequest $timeRequest")
 
-                val entity = EventEntities(ts.time, type, date, "invalid_forgot_check", null)
+                val entity = EventEntities(
+                    created_at = ts.time,
+                    event_type = type,
+                    created_date = CustomDate(
+                        month = date.month.value,
+                        day = date.dayOfMonth,
+                        year = date.year
+                    ),
+                    reason = "invalid_forgot_check",
+                    status = null
+                )
+
                 val call = request.createSubmission(token, entity)
-                call.enqueue(object: Callback<EventEntities>{
+                call.enqueue(object : Callback<EventEntities> {
                     override fun onResponse(
                         call: Call<EventEntities>,
                         response: Response<EventEntities>
                     ) {
-                        if(response.isSuccessful && response.code() == 200){
+                        if (response.isSuccessful && response.code() == 200) {
                             dialog.dismiss()
                             loadData()
-                            Constant.dialogSuccess(this@RequestActivity, "Tạo yêu cầu mới thành công.")
-                        }else{
-                            println(response.body())
+                            Constant.dialogSuccess(
+                                this@RequestActivity,
+                                "Tạo yêu cầu mới thành công."
+                            )
+                        } else {
+                            if (response.errorBody() != null){
+                                val jObjError = JSONObject(response.errorBody()!!.string())
+                                Constant.dialogError(
+                                    this@RequestActivity,
+                                    jObjError["msg"].toString()
+                                )
+                            }else{
+                                println(response.body())
+                            }
                         }
                     }
 
                     override fun onFailure(call: Call<EventEntities>, t: Throwable) {
-                        Constant.dialogError(this@RequestActivity, "Có lỗi xảy ra vui lòng thử lại.")
+                        Constant.dialogError(
+                            this@RequestActivity,
+                            "Có lỗi xảy ra vui lòng thử lại."
+                        )
                     }
 
                 })
@@ -202,9 +229,9 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
         type = p0?.getItemAtPosition(p2).toString()
-        if (type == "Lúc Đến"){
+        if (type == "Lúc Đến") {
             type = CHECK_IN
-        }else{
+        } else {
             type = CHECK_OUT
         }
     }
@@ -213,8 +240,8 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
 
     }
 
-    private fun buttonActive(btn: Int){
-        when(btn){
+    private fun buttonActive(btn: Int): Int {
+        when (btn) {
             BUTTON_WAITING -> {
                 btnWaiting.setBackgroundColor(Color.LTGRAY)
                 btnApprove.setBackgroundColor(Color.WHITE)
@@ -233,20 +260,24 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
                 btnDecline.setBackgroundColor(Color.LTGRAY)
             }
         }
+        return btn
     }
 
-    private fun loadData(){
+    private fun loadData() {
         // call api
-        val call = request.listSubmission(token=token)
+        val call = request.listSubmission(token = token)
         lstData = ArrayList()
+        lstWaiting = ArrayList()
+        lstAccept = ArrayList()
+        lstDecline = ArrayList()
 
-        call.enqueue(object: Callback<Event>{
+        call.enqueue(object : Callback<Event> {
             override fun onResponse(call: Call<Event>, response: Response<Event>) {
-                if (response.code() == 200){
+                if (response.code() == 200) {
                     response.body()?.event?.forEach {
                         lstData.add(it)
                     }
-                    setAdapter(isWaiting = true, isApprove = null, isDecline = null)
+                    setAdapter()
                     swipeRefreshSubmission.isRefreshing = false
                 }
             }
@@ -259,12 +290,13 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
         })
     }
 
-    private fun setAdapter(isWaiting: Boolean?, isApprove: Boolean?, isDecline: Boolean?){
-        recycleViewAdapter = RecyclerViewChamBu(lstData,this, applicationContext, isWaiting, isApprove, isDecline)
+    private fun setAdapter() {
+        recycleViewAdapter =
+            RecyclerViewChamBu(lstData, this, applicationContext)
 
-        if (lstData.size >= 2){
+        if (lstData.size >= 2) {
             rcvRequest.layoutManager = GridLayoutManager(this, 2)
-        }else{
+        } else {
             rcvRequest.layoutManager = LinearLayoutManager(this)
         }
         rcvRequest.adapter = recycleViewAdapter
@@ -283,7 +315,18 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
             }
         }
 
-        recycleViewAdapter.setData(lstWaiting, true, accept = false, decline = false)
+        when (isActive){
+            1 -> {
+                recycleViewAdapter.setData(lstWaiting)
+            }
+            2 -> {
+                recycleViewAdapter.setData(lstAccept)
+            }
+            else -> {
+                recycleViewAdapter.setData(lstDecline)
+            }
+        }
+
         swipeRefreshSubmission.isRefreshing = false
     }
 
@@ -293,14 +336,17 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
     }
 
     @SuppressLint("SetTextI18n")
-    private fun openDialog(id: Int, msg: String){
+    private fun openDialog(id: Int, msg: String) {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.dialog_confirm)
 
         val window = dialog.window ?: return
 
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        window.setLayout(
+            WindowManager.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
         window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val windowAttribute: WindowManager.LayoutParams = window.attributes
@@ -311,7 +357,7 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
 
         val btnClose = dialog.findViewById<Button>(R.id.cancelConfirm)
         val btnSend = dialog.findViewById<Button>(R.id.approveRequest)
-        val messageConfirm = dialog.findViewById<Button>(R.id.message_confirm)
+        val messageConfirm = dialog.findViewById<TextView>(R.id.message_confirm)
 
         messageConfirm.text = msg
 
@@ -327,12 +373,12 @@ class RequestActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener,
                     call: Call<EventEntities>,
                     response: Response<EventEntities>
                 ) {
-                    if (response.code() == 200){
+                    if (response.code() == 200) {
                         loadData()
                         swipeRefreshSubmission.isRefreshing = false
                         val jObjError = JSONObject(response.errorBody()?.string())
                         Constant.dialogSuccess(this@RequestActivity, jObjError["msg"].toString())
-                    }else{
+                    } else {
                         swipeRefreshSubmission.isRefreshing = false
                         val jObjError = JSONObject(response.errorBody()?.string())
                         Constant.dialogError(this@RequestActivity, jObjError["msg"].toString())

@@ -148,7 +148,9 @@ class SessionManager(context: Context) {
     }
 
     fun getCurrentFormat(pattern: String): String {
-        return SimpleDateFormat(pattern, Locale.getDefault()).format(Date())
+        val dfm = SimpleDateFormat(pattern, Locale.getDefault())
+        dfm.timeZone = TimeZone.getTimeZone("GMT+0700")
+        return dfm.format(Date())
     }
 
     fun getMonthYearCalendar(month: Int): String{
@@ -173,7 +175,7 @@ class SessionManager(context: Context) {
         }else{
             Date("${timestamp * 1000}".toLong())
         }
-
+        formatter.timeZone = TimeZone.getTimeZone("GMT+0700")
         return formatter.format(date)
     }
 

@@ -27,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var buttonRegister: Button
     private lateinit var prefs: SharedPreferences
     private lateinit var sessionManager: SessionManager
+    private val request = ApiClient.getClient().create(RestAPI::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,10 +44,7 @@ class LoginActivity : AppCompatActivity() {
             login()
         }
 
-        if (prefs.contains("tokenUser")){
-            val intent = Intent(applicationContext, MainActivity::class.java)
-            startActivity(intent)
-        }
+        redirectActivity()
     }
 
     private fun login() {
@@ -54,16 +52,15 @@ class LoginActivity : AppCompatActivity() {
         val strPassword = editPassword.text.toString().trim()
 
         if (TextUtils.isEmpty(strUserName) || TextUtils.isEmpty(strPassword)){
-            Toast.makeText(applicationContext, "Enter your info begin login", Toast.LENGTH_SHORT).show()
+            Constant.dialogError(this@LoginActivity, "Vui lòng nhập đủ thông tin !!")
             return
         }
 
-        val request = ApiClient.getClient().create(RestAPI::class.java)
+
         val user = User(username=strUserName, password=strPassword)
 
         val call = request.login(user)
         var is_active = false
-        sessionManager = SessionManager(applicationContext)
         val token = "Token ${sessionManager.fetchAuthToken()}"
 
         call.enqueue(object: Callback<User>{
@@ -73,6 +70,7 @@ class LoginActivity : AppCompatActivity() {
                     info.enqueue(object: Callback<User>{
                         override fun onResponse(callInfo: Call<User>, responseInfo: Response<User>) {
                             if (responseInfo.isSuccessful && responseInfo.code() == 200){
+                                sessionManager.refreshAll()
                                 sessionManager.saveUserName(responseInfo.body()?.full_name.toString())
                                 sessionManager.saveDayOff(responseInfo.body()?.dayOff.toString())
                                 sessionManager.saveManagerEmail(responseInfo.body()?.manager_email.toString())
@@ -83,7 +81,6 @@ class LoginActivity : AppCompatActivity() {
                                 sessionManager.isHR(responseInfo.body()?.is_admin!!)
                                 sessionManager.saveAuthToken(responseInfo.body()?.token.toString())
                                 is_active = responseInfo.body()?.is_active!!
-                                retrieveTokenDevice()
                             }
 
                             if (is_active){
@@ -118,13 +115,29 @@ class LoginActivity : AppCompatActivity() {
         buttonLogin = findViewById(R.id.login)
         buttonRegister = findViewById(R.id.buttonRegister)
         prefs = getSharedPreferences("PREF", MODE_PRIVATE)
+        sessionManager = SessionManager(applicationContext)
     }
 
-    private fun retrieveTokenDevice(){
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if(task.isSuccessful){
-                sessionManager.saveTokenDevice(task.result.toString())
-            }
+    private fun redirectActivity(){
+        val call = request.checkLogin("Token ${sessionManager.fetchAuthToken()}")
+
+        if(!prefs.contains("tokenUser")){
+            return
         }
+        call.enqueue(object: Callback<String>{
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.code() == 200){
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }else{
+                    Constant.dialogError(this@LoginActivity, "Tài khoản không tồn tại.")
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Constant.dialogError(this@LoginActivity, "Có lỗi xảy ra vui lòng thử lại.")
+            }
+        })
     }
 }
